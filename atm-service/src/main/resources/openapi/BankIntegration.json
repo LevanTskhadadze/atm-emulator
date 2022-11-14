@@ -1,0 +1,257 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "OpenAPI definition",
+    "version": "v0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Generated server url"
+    }
+  ],
+  "paths": {
+    "/authentication": {
+      "post": {
+        "tags": [
+          "authentication"
+        ],
+        "operationId": "authenticate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthenticationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/account-operations/withdraw-cash": {
+      "post": {
+        "tags": [
+          "Account Operations"
+        ],
+        "operationId": "withdrawCash",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WithdrawCashRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Receipt"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/account-operations/deposit-cash": {
+      "post": {
+        "tags": [
+          "Account Operations"
+        ],
+        "operationId": "depositCash",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DepositCashRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/Receipt"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/card/{cardNumber}": {
+      "get": {
+        "tags": [
+          "Card Validation"
+        ],
+        "operationId": "getCardAuthenticationType",
+        "parameters": [
+          {
+            "name": "cardNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "PIN_CODE",
+                    "FINGER_PRINT"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/account-operations/balance/{cardNumber}": {
+      "get": {
+        "tags": [
+          "Account Operations"
+        ],
+        "operationId": "checkBalance",
+        "parameters": [
+          {
+            "name": "cardNumber",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AuthenticationRequest": {
+        "type": "object",
+        "properties": {
+          "cardNumber": {
+            "type": "string"
+          },
+          "credentials": {
+            "type": "string"
+          },
+          "authType": {
+            "type": "string",
+            "enum": [
+              "PIN_CODE",
+              "FINGER_PRINT"
+            ]
+          }
+        }
+      },
+      "WithdrawCashRequest": {
+        "required": [
+          "amount",
+          "cardNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "cardNumber": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          }
+        }
+      },
+      "Receipt": {
+        "type": "object",
+        "properties": {
+          "cardNumber": {
+            "type": "string"
+          },
+          "balance": {
+            "type": "number"
+          },
+          "transactionAmount": {
+            "type": "number"
+          },
+          "transactionType": {
+            "type": "string",
+            "enum": [
+              "DEPOSIT",
+              "WITHDRAW"
+            ]
+          }
+        }
+      },
+      "DepositCashRequest": {
+        "required": [
+          "amount",
+          "cardNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "cardNumber": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          }
+        }
+      }
+    }
+  }
+}
